@@ -123,7 +123,7 @@ def extend_segmap(fd_seg, id_targ, radius=5, coords=None, override=True,
             new_mask = (circle_mask)
             fd_seg_new[new_mask] = id_targ
         else:
-            new_mask = (circle_mask) & np.where((fd_seg == id_targ) | (fd_seg == 0))
+            new_mask = np.where( (circle_mask) & ((fd_seg == id_targ) | (fd_seg == 0))) 
             fd_seg_new[new_mask] = id_targ
 
     else:
@@ -139,7 +139,7 @@ def extend_segmap(fd_seg, id_targ, radius=5, coords=None, override=True,
             new_mask = (region_mask)
             fd_seg_new[new_mask] = id_targ
         else:
-            new_mask = (region_mask) & np.where((fd_seg == id_targ) | (fd_seg == 0))
+            new_mask = np.where( (mask) & ((fd_seg == id_targ) | (fd_seg == 0))) 
             fd_seg_new[new_mask] = id_targ
 
     # Catalog part;

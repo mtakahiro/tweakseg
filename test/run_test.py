@@ -22,7 +22,6 @@ if __name__ == "__main__":
     # 1. case where you want to expand your segmap of a specific source;
     if True:
         print('1. Expanding existing segmap;')
-        coords = [1216, 1244]
         plt.imshow(fd_seg)
         plt.xlim(1240,1280)
         plt.ylim(1220,1260)
