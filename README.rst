@@ -26,7 +26,7 @@ Required packages will be installed by;
 
 Examples
 ~~~~~~~~
-An example data set is stored at `gsf_examples <https://github.com/mtakahiro/gsf_examples/tree/master/example/>`__
+An example notebook is stored at `./test/`` directory/
 
 .. code-block:: bash
 
@@ -36,4 +36,3 @@ An example data set is stored at `gsf_examples <https://github.com/mtakahiro/gsf
 
 Release notes
 ~~~~~~~~~~~~~
-- From v0.1.
