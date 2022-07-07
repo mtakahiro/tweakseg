@@ -1,7 +1,6 @@
 
 Tweak Segmentation Map
 ~~~~~~~~~~~~~~~~~~~~~~
-version 0.1
 
 - Segmentation and catalog tweaking module.
 
