@@ -1,9 +1,0 @@
-README.rst
-setup.py
-tweakseg/__init__.py
-tweakseg/tweakseg.py
-tweakseg.egg-info/PKG-INFO
-tweakseg.egg-info/SOURCES.txt
-tweakseg.egg-info/dependency_links.txt
-tweakseg.egg-info/not-zip-safe
-tweakseg.egg-info/top_level.txt
