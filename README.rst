@@ -4,11 +4,6 @@ Tweak Segmentation Map
 
 - Segmentation and catalog tweaking module.
 
-========================================================================================
-
-
-Demonstration
-~~~~~~~~~~~~~
 .. image:: ./demo.gif
 
 
