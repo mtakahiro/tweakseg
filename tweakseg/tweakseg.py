@@ -9,7 +9,7 @@ import astropy.wcs as wcs
 from astropy.wcs.utils import pixel_to_skycoord
 
 
-def add_source(file_cat,id,mag_auto=20.0,ext=1, file_out=None):
+def add_source(file_cat,id,mag_auto=20.0,ext=1, file_out=None, f_phot=True):
     '''
     '''
     if file_out == None:
@@ -23,7 +23,7 @@ def add_source(file_cat,id,mag_auto=20.0,ext=1, file_out=None):
     hdu_new = hdu.copy()
     new_row = []
     for key in keys:
-        if key.name == 'NUMBER' or key.name == 'ID':
+        if key.name == 'NUMBER' or key.name == 'ID' or key.name == 'id':
             new_row.append(id)
         elif key.name == 'MAG_AUTO':
             new_row.append(mag_auto)
@@ -41,7 +41,8 @@ def add_source(file_cat,id,mag_auto=20.0,ext=1, file_out=None):
     # Add data;
     fits.append(file_out, fd_data.data, fd_data.header)
     # Add wcs;
-    fits.append(file_out, hdu_new[2].data, hdu_new[2].header)
+    if not f_phot:
+        fits.append(file_out, hdu_new[2].data, hdu_new[2].header)
 
     # Remove temp files;
     os.system('rm %s'%file_tmp)
