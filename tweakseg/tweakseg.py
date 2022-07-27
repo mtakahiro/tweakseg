@@ -9,7 +9,7 @@ import astropy.wcs as wcs
 from astropy.wcs.utils import pixel_to_skycoord
 
 
-def add_source(file_cat,id,mag_auto=20.0,ext=1, file_out=None, f_phot=True):
+def add_source(file_cat,id,mag_auto=20.0,ext=1, file_out=None, f_phot=True, copy_flux=True, id_orig=0):
     '''
     '''
     if file_out == None:
@@ -19,6 +19,15 @@ def add_source(file_cat,id,mag_auto=20.0,ext=1, file_out=None, f_phot=True):
     keys = []
     for key in hdu[ext].data.columns:
         keys.append(key)
+        # Get original info;
+        if id_orig > 0:
+            if key.name == 'NUMBER' or key.name == 'ID' or key.name == 'id':
+                iix = np.where(hdu[ext].data[key.name] == id_orig)
+                if len(iix[0])==0:
+                    id_orig = 0
+    
+    if id_orig > 0:
+        print('Original id is %d'%id_orig)
 
     hdu_new = hdu.copy()
     new_row = []
@@ -28,10 +37,14 @@ def add_source(file_cat,id,mag_auto=20.0,ext=1, file_out=None, f_phot=True):
         elif key.name == 'MAG_AUTO':
             new_row.append(mag_auto)
         else:
-            new_row.append(0)
+            if id_orig > 0:
+                new_row.append(hdu[ext].data[key.name][iix])
+            else:
+                new_row.append(0)
 
     t = Table(hdu[ext].data)
     t.add_row(new_row)
+
     file_tmp = 'tmp.fits'
     t.write(file_tmp, format='fits',overwrite=True)
     fd_data = fits.open(file_tmp)[1]
@@ -102,6 +115,7 @@ def extend_segmap(fd_seg, id_targ, radius=5, coords=None, override=True,
         if True, the script will override any pixels that belong other sources within the new region.
 
     '''
+    id_orig = None
     if file_region==None:
         pos = np.where(fd_seg == id_targ)
         if len(pos[0]) == 0 and coords == None:
@@ -116,6 +130,8 @@ def extend_segmap(fd_seg, id_targ, radius=5, coords=None, override=True,
 
         h, w = fd_seg.shape
         circle_mask = create_circular_mask(h, w, center=[xcen,ycen], radius=radius)
+        new_mask = (circle_mask)
+        id_orig = np.max(fd_seg[new_mask])
 
         # Then fill the pixel with id;
         fd_seg_new = fd_seg.copy()
@@ -133,6 +149,7 @@ def extend_segmap(fd_seg, id_targ, radius=5, coords=None, override=True,
         fd_region = pyregion.open(file_region)
         mask = fd_region.get_mask(shape=(np.shape(fd_seg)), header=hd_seg)
         region_mask = np.where(mask == True)
+        id_orig = np.max(fd_seg[new_mask])
         
         # Then fill the pixel with id;
         if override:
@@ -145,7 +162,7 @@ def extend_segmap(fd_seg, id_targ, radius=5, coords=None, override=True,
 
     # Catalog part;
     if not file_cat == None:
-        file_cat_new = add_source(file_cat, id_targ, mag_auto=mag_auto, file_out=file_cat_out)
+        file_cat_new = add_source(file_cat, id_targ, mag_auto=mag_auto, file_out=file_cat_out, id_orig=id_orig)
         return fd_seg_new,file_cat_new
     else:
         return fd_seg_new, None
