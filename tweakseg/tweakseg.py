@@ -35,9 +35,9 @@ def add_source(file_cat, id, mag_auto=None, ext=1, file_out=None, f_phot=True,
     for key in keys:
         if key.name == 'NUMBER' or key.name == 'ID' or key.name == 'id':
             new_row.append(id)
-        elif key.name == 'X_WORLD' and sky[0] != None:
+        elif (key.name == 'X_WORLD' or key.name == 'RA') and sky[0] != None:
             new_row.append(sky[0])
-        elif key.name == 'Y_WORLD' and sky[1] != None:
+        elif (key.name == 'Y_WORLD' or key.name == 'DEC') and sky[1] != None:
             new_row.append(sky[1])
         else:
             if id_orig > 0:
