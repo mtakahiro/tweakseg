@@ -7,9 +7,10 @@ from astropy.io import fits
 from astropy.table import Table
 import astropy.wcs as wcs
 from astropy.wcs.utils import pixel_to_skycoord
+from astropy.wcs import WCS
 
-
-def add_source(file_cat,id,mag_auto=20.0,ext=1, file_out=None, f_phot=True, copy_flux=True, id_orig=0):
+def add_source(file_cat, id, mag_auto=None, ext=1, file_out=None, f_phot=True, 
+    copy_flux=True, id_orig=0, sky=[None,None]):
     '''
     '''
     if file_out == None:
@@ -34,8 +35,10 @@ def add_source(file_cat,id,mag_auto=20.0,ext=1, file_out=None, f_phot=True, copy
     for key in keys:
         if key.name == 'NUMBER' or key.name == 'ID' or key.name == 'id':
             new_row.append(id)
-        elif key.name == 'MAG_AUTO':
-            new_row.append(mag_auto)
+        elif key.name == 'X_WORLD' and sky[0] != None:
+            new_row.append(sky[0])
+        elif key.name == 'Y_WORLD' and sky[1] != None:
+            new_row.append(sky[1])
         else:
             if id_orig > 0:
                 new_row.append(hdu[ext].data[key.name][iix])
@@ -160,9 +163,16 @@ def extend_segmap(fd_seg, id_targ, radius=5, coords=None, override=True,
             new_mask = np.where( (mask) & ((fd_seg == id_targ) | (fd_seg == 0))) 
             fd_seg_new[new_mask] = id_targ
 
+        xcen,ycen = np.median(region_mask[1]),np.median(region_mask[0])
+
+    # Calculate RADEC;
+    w = WCS(hd_seg)
+    sky = w.pixel_to_world(xcen,ycen)
+
     # Catalog part;
     if not file_cat == None:
-        file_cat_new = add_source(file_cat, id_targ, mag_auto=mag_auto, file_out=file_cat_out, id_orig=id_orig)
+        file_cat_new = add_source(file_cat, id_targ, mag_auto=mag_auto, file_out=file_cat_out, 
+            id_orig=id_orig, sky=sky)
         return fd_seg_new,file_cat_new
     else:
         return fd_seg_new, None
