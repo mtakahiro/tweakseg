@@ -172,7 +172,7 @@ def extend_segmap(fd_seg, id_targ, radius=5, coords=None, override=True,
     # Catalog part;
     if not file_cat == None:
         file_cat_new = add_source(file_cat, id_targ, mag_auto=mag_auto, file_out=file_cat_out, 
-            id_orig=id_orig, sky=sky)
+            id_orig=id_orig, sky=[sky.ra.value,sky.dec.value])
         return fd_seg_new,file_cat_new
     else:
         return fd_seg_new, None
