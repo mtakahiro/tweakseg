@@ -9,6 +9,39 @@ import astropy.wcs as wcs
 from astropy.wcs.utils import pixel_to_skycoord
 from astropy.wcs import WCS
 
+
+def remove_segmap(fd_seg, ids_targ, value_empty=0, coords=None, override=True, 
+    ):
+    '''
+    Purpose
+    -------
+    Expand segmentation of a specific source to the input radius from the source center. 
+    If radius does not exceed segmap, nothing will happen. 
+
+    Parameters
+    ----------
+    fd_seg : float 2d array. 
+        seg data array. E.g. fd_seg = fits.open(file)['seg'].data
+        
+    ids_targ : list of int
+        target ids.
+
+    override : bool
+        if True, the script will override any pixels that belong other sources within the new region.
+
+    '''
+    fd_seg_new = fd_seg.copy()
+    for id_targ in ids_targ:
+        pos = np.where(fd_seg == id_targ)
+        if len(pos[0]) == 0 and coords == None:
+            print('%d is not found in the input segmap nor coords are specified. Exiting.'%id_targ)
+            continue
+
+        fd_seg_new[pos] = value_empty
+
+    return fd_seg_new
+
+
 def add_source(file_cat, id, mag_auto=None, ext=1, file_out=None, f_phot=True, 
     copy_flux=True, id_orig=0, sky=[None,None]):
     '''
@@ -35,9 +68,9 @@ def add_source(file_cat, id, mag_auto=None, ext=1, file_out=None, f_phot=True,
     for key in keys:
         if key.name == 'NUMBER' or key.name == 'ID' or key.name == 'id':
             new_row.append(id)
-        elif (key.name == 'X_WORLD' or key.name == 'RA') and sky[0] != None:
+        elif (key.name.upper() == 'X_WORLD' or key.name.upper() == 'RA') and sky[0] != None:
             new_row.append(sky[0])
-        elif (key.name == 'Y_WORLD' or key.name == 'DEC') and sky[1] != None:
+        elif (key.name.upper() == 'Y_WORLD' or key.name.upper() == 'DEC') and sky[1] != None:
             new_row.append(sky[1])
         else:
             if id_orig > 0:
