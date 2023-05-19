@@ -10,7 +10,7 @@ from astropy.wcs.utils import pixel_to_skycoord
 from astropy.wcs import WCS
 
 
-def remove_segmap(fd_seg, ids_targ, value_empty=0, coords=None, override=True, 
+def remove_segment(fd_seg, ids_targ, value_empty=0, coords=None, override=True, 
     ):
     '''
     Purpose
@@ -124,14 +124,14 @@ def create_circular_mask(h, w, center=None, radius=None):
     return mask
 
 
-def save_segmap(fd_seg, file_output, hdr=None):
+def save_segmap(fd_seg, file_output, hdr=None, overwrite=True):
     '''
     '''
     if file_output == None:
         file_output = 'test_seg.fits'
 
-    fits.writeto(filename=file_output, data=fd_seg, header=hdr, overwrite=True)
-    return True
+    fits.writeto(filename=file_output, data=fd_seg, header=hdr, overwrite=overwrite)
+    return file_output
 
 
 def extend_segmap(fd_seg, id_targ, radius=5, coords=None, override=True, 
@@ -185,7 +185,7 @@ def extend_segmap(fd_seg, id_targ, radius=5, coords=None, override=True,
         fd_region = pyregion.open(file_region)
         mask = fd_region.get_mask(shape=(np.shape(fd_seg)), header=hd_seg)
         region_mask = np.where(mask == True)
-        id_orig = np.max(fd_seg[new_mask])
+        id_orig = np.max(fd_seg[region_mask])
         
         # Then fill the pixel with id;
         if override:
